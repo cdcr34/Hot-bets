@@ -7,7 +7,14 @@ df = pd.read_csv("bettor_stats.csv")
 # Sidebar selections
 st.sidebar.header("Select Bettor & Bet Type")
 bettor = st.sidebar.selectbox("Bettor", sorted(df['Bettor'].unique()))
-bet_type = st.sidebar.selectbox("Bet Type", sorted(df['Bet Type'].unique()))
+# Filter the DataFrame to only rows for the selected bettor
+bettor_df = df[df['Bettor'] == bettor]
+
+# Get only bet types that this bettor has data for
+available_bet_types = sorted(bettor_df['Bet Type'].dropna().unique())
+
+# Let user choose from those bet types only
+bet_type = st.sidebar.selectbox("Bet Type", available_bet_types)
 
 # Filter to get ROI from the spreadsheet
 row = df[(df['Bettor'] == bettor) & (df['Bet Type'] == bet_type)]

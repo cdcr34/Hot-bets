@@ -48,6 +48,7 @@ st.markdown(f"**Implied True Probability (ITP):** {itp:.2%}")
 st.markdown(f"**Expected ROI:** {expected:.2f}%")
 sample_size = int(row.iloc[0]['Sample Size'])
 st.markdown(f"**Sample Size:** {sample_size} bets")
+
 import math
 z_score = 1.96
 std_dev = 1.0

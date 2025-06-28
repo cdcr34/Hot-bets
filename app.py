@@ -63,9 +63,6 @@ expected_roi_lower = expected_roi(new_odds, lower_itp)
 expected_roi_moe = (expected_roi_upper - expected_roi_lower) / 2
 
 # Display results
-st.title("Expected ROI Based on Bettor Performance")
-st.markdown(f"**Selected Bettor:** {bettor}")
-st.markdown(f"**Bet Type:** {bet_type}")
 st.markdown(f"**Bettor ROI:** {roi_decimal * 100:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
 st.markdown(f"**Margin of Error on Bettor ROI (95% CI): ±{margin_of_error * 100:.2f}%**")

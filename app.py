@@ -3,9 +3,6 @@ import pandas as pd
 
 # Load the spreadsheet
 df = pd.read_csv("bettor_stats.csv")
-st.write("DataFrame loaded:")
-st.write(df.head())
-st.write("Columns:", df.columns.tolist())
 
 # Sidebar selections
 st.sidebar.header("Select Bettor & Bet Type")

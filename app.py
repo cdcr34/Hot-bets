@@ -36,9 +36,7 @@ itp = implied_true_probability(original_odds, roi_decimal)
 expected = expected_roi(new_odds, itp)
 
 # Output results
-st.title("Expected ROI Based on Bettor Performance")
-st.markdown(f"**Selected Bettor:** {bettor}")
-st.markdown(f"**Bet Type:** {bet_type}")
+st.title("Expected ROI")
 st.markdown(f"**ROI from spreadsheet:** {roi_decimal * 100:.2f}%")
 st.markdown(f"**Implied True Probability (ITP):** {itp:.2%}")
 st.markdown(f"**Your Expected ROI at new odds:** {expected:.2f}%")

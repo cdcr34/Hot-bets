@@ -43,7 +43,11 @@ itp = implied_true_probability(original_odds, roi_decimal)
 expected = expected_roi(new_odds, itp)
 
 # Output results
-st.markdown(f"**Bettor ROI:** {roi_decimal * 100:.2f}%")
+roi_percent = roi_decimal * 100
+st.markdown(f"**Bettor ROI:** {roi_percent:.2f}%")
+
+sample_size = int(row.iloc[0]['Sample Size'])
+st.markdown(f"**Sample Size:** {sample_size} bets")
 
 import math
 z_score = 1.96
@@ -53,5 +57,3 @@ st.markdown(f"**Margin of Error (95% CI): ±{margin_of_error * 100:.2f}%**")
 
 st.markdown(f"**Implied True Probability (ITP):** {itp:.2%}")
 st.markdown(f"**Expected ROI:** {expected:.2f}%")
-sample_size = int(row.iloc[0]['Sample Size'])
-st.markdown(f"**Sample Size:** {sample_size} bets")

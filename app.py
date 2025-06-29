@@ -47,6 +47,8 @@ def expected_roi(new_odds, true_prob):
     payout = new_odds / 100 if new_odds > 0 else 100 / abs(new_odds)
     return (true_prob * payout - (1 - true_prob)) * 100
 
+expected = expected_roi(new_odds, itp)
+
 # Use adjusted ROI to calculate Implied True Probability (ITP)
 def implied_true_probability(original_odds, roi):
     payout = original_odds / 100 if original_odds > 0 else 100 / abs(original_odds)

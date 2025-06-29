@@ -54,8 +54,6 @@ def kelly_fraction(odds, win_prob):
     q = 1 - win_prob
     kelly = (b * win_prob - q) / b
     return max(0, kelly)  # avoid negative bets
-
-# --- Kelly stake calculation ---
 kelly = kelly_fraction(new_odds, itp)
 kelly_half = kelly / 2  # safer version
 

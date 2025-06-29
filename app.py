@@ -54,6 +54,10 @@ def implied_true_probability(original_odds, roi):
 
 itp = implied_true_probability(original_odds, adjusted_roi)
 
+# --- ITP confidence bounds using adjusted ROI ± margin of error ---
+upper_itp = implied_true_probability(original_odds, adjusted_roi + adjusted_moe)
+lower_itp = implied_true_probability(original_odds, adjusted_roi - adjusted_moe)
+
 # --- Calculate Kelly Fraction (fraction of bankroll to wager) ---
 def kelly_fraction(odds, win_prob):
     payout = odds / 100 if odds > 0 else 100 / abs(odds)

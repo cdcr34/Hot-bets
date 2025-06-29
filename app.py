@@ -42,23 +42,25 @@ shrink_weight = sample_size / (sample_size + k)
 adjusted_roi = shrink_weight * roi_decimal + (1 - shrink_weight) * prior_mean
 adjusted_moe = shrink_weight * margin_of_error
 
-# --- Implied True Probability (ITP) function ---
-def implied_true_probability(original_odds, roi):
-    payout = original_odds / 100 if original_odds > 0 else 100 / abs(original_odds)
-    return (roi + 1) / (payout + 1)
-
 # --- Expected ROI function ---
 def expected_roi(new_odds, true_prob):
     payout = new_odds / 100 if new_odds > 0 else 100 / abs(new_odds)
     return (true_prob * payout - (1 - true_prob)) * 100
 
-# --- Use adjusted ROI to calculate ITP and expected ROI ---
-itp = implied_true_probability(original_odds, adjusted_roi)
-expected = expected_roi(new_odds, itp)
+# --- Calculate Kelly Fraction (fraction of bankroll to wager) ---
+def kelly_fraction(odds, win_prob):
+    payout = odds / 100 if odds > 0 else 100 / abs(odds)
+    b = payout
+    q = 1 - win_prob
+    kelly = (b * win_prob - q) / b
+    return max(0, kelly)  # avoid negative bets
 
-# --- Confidence intervals for ITP based on adjusted ROI ---
-upper_itp = implied_true_probability(original_odds, adjusted_roi + adjusted_moe)
-lower_itp = implied_true_probability(original_odds, adjusted_roi - adjusted_moe)
+# --- Kelly stake calculation ---
+kelly = kelly_fraction(new_odds, itp)
+kelly_half = kelly / 2  # safer version
+
+# Assume 1 unit = 1% of bankroll
+recommended_units = kelly_half * 100
 
 # --- Expected ROI bounds ---
 expected_roi_upper = expected_roi(new_odds, upper_itp)
@@ -75,6 +77,9 @@ st.markdown(f"**Sample Size:** {sample_size} bets")
 st.markdown("---")
 st.subheader(f"Expected ROI: {expected:.2f}%")
 st.markdown(f"**MoE on Expected ROI (95% CI): ±{expected_roi_moe:.2f}%**")
+st.markdown(f"### 🎯 Bet Sizing Recommendation")
+st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
+st.markdown(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown("---")
 st.subheader(f"**Bayesian Adjusted Bettor ROI:** {adjusted_roi * 100:.2f}%")
 st.markdown(f"**Adjusted MoE (95% CI): ±{adjusted_moe * 100:.2f}%**")

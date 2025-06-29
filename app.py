@@ -42,19 +42,19 @@ shrink_weight = sample_size / (sample_size + k)
 adjusted_roi = shrink_weight * roi_decimal + (1 - shrink_weight) * prior_mean
 adjusted_moe = shrink_weight * margin_of_error
 
-# --- Expected ROI function ---
-def expected_roi(new_odds, true_prob):
-    payout = new_odds / 100 if new_odds > 0 else 100 / abs(new_odds)
-    return (true_prob * payout - (1 - true_prob)) * 100
-
-expected = expected_roi(new_odds, itp)
-
 # Use adjusted ROI to calculate Implied True Probability (ITP)
 def implied_true_probability(original_odds, roi):
     payout = original_odds / 100 if original_odds > 0 else 100 / abs(original_odds)
     return (roi + 1) / (payout + 1)
 
 itp = implied_true_probability(original_odds, adjusted_roi)
+
+# --- Expected ROI function ---
+def expected_roi(new_odds, true_prob):
+    payout = new_odds / 100 if new_odds > 0 else 100 / abs(new_odds)
+    return (true_prob * payout - (1 - true_prob)) * 100
+
+expected = expected_roi(new_odds, itp)
 
 # --- ITP confidence bounds using adjusted ROI ± margin of error ---
 upper_itp = implied_true_probability(original_odds, adjusted_roi + adjusted_moe)

@@ -85,6 +85,11 @@ st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
 st.markdown("---")
 st.subheader(f"**Bayesian Adjusted Bettor ROI:** {adjusted_roi * 100:.2f}%")
+with st.expander("What is Bayesian Adjusted ROI?"):
+    st.markdown("""
+    Bayesian adjustment 'shrinks' extreme ROI values toward a prior average (like 0%) when the sample size is small.
+    This prevents overreacting to short-term luck. As more data comes in, the adjusted ROI moves closer to the actual ROI.
+    """)
 st.markdown(f"**95% CI:** {roi_lower * 100:.2f}% to {roi_upper * 100:.2f}%")
 st.markdown(f"**Adjusted MoE (95% CI): ±{adjusted_moe * 100:.2f}%**")
 st.markdown("---")
@@ -94,3 +99,8 @@ st.markdown(f"**MoE on Expected ROI (95% CI): ±{expected_roi_moe:.2f}%**")
 st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
+with st.expander("What is the Kelly Criterion?"):
+    st.markdown("""
+    The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.
+    It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
+    """)

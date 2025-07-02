@@ -26,7 +26,6 @@ sample_size = int(row.iloc[0]['Sample Size'])
 
 # --- User inputs odds ---
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
-original_odds = st.number_input("", value=original_odds, key="original_odds_input")
 new_odds = st.number_input("New Odds (your current odds)", value=-105)
 
 # --- Statistical parameters ---

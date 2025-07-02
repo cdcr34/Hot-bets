@@ -28,6 +28,42 @@ sample_size = int(row.iloc[0]['Sample Size'])
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
 new_odds = st.number_input("New Odds (your current odds)", value=-105)
 
+# --- Original Odds Input with +/- buttons ---
+st.markdown("**Original Odds (the odds the bettor got):**")
+col1, col2, col3 = st.columns([1, 2, 1])
+with col1:
+    if st.button("➖", key="orig_minus"):
+        st.session_state.original_odds -= 1
+with col2:
+    st.session_state.original_odds = st.number_input(
+        label="",
+        value=st.session_state.original_odds,
+        key="original_odds_input"
+    )
+with col3:
+    if st.button("➕", key="orig_plus"):
+        st.session_state.original_odds += 1
+
+original_odds = st.session_state.original_odds
+
+# --- New Odds Input with +/- buttons ---
+st.markdown("**New Odds (your current odds):**")
+col4, col5, col6 = st.columns([1, 2, 1])
+with col4:
+    if st.button("➖", key="new_minus"):
+        st.session_state.new_odds -= 1
+with col5:
+    st.session_state.new_odds = st.number_input(
+        label="",
+        value=st.session_state.new_odds,
+        key="new_odds_input"
+    )
+with col6:
+    if st.button("➕", key="new_plus"):
+        st.session_state.new_odds += 1
+
+new_odds = st.session_state.new_odds
+
 # --- Statistical parameters ---
 z_score = 1.96  # 95% confidence
 std_dev = 1.0   # conservative std dev for ROI

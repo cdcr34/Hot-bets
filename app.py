@@ -34,7 +34,7 @@ std_dev = 1.0   # conservative std dev for ROI
 k = 100         # Bayesian shrinkage constant
 prior_mean = 0.00  # prior average ROI
 
-# --- Observed ROI margin of error ---
+# --- Margin of Error ---
 margin_of_error = z_score * (std_dev / math.sqrt(sample_size))
 
 # --- Bayesian shrinkage ---
@@ -42,78 +42,55 @@ shrink_weight = sample_size / (sample_size + k)
 adjusted_roi = shrink_weight * roi_decimal + (1 - shrink_weight) * prior_mean
 adjusted_moe = shrink_weight * margin_of_error
 
-# Use adjusted ROI to calculate Implied True Probability (ITP)
-def implied_true_probability(original_odds, roi):
-    payout = original_odds / 100 if original_odds > 0 else 100 / abs(original_odds)
-    return (roi + 1) / (payout + 1)
+# --- Confidence Interval for Adjusted ROI ---
+roi_lower = adjusted_roi - adjusted_moe
+roi_upper = adjusted_roi + adjusted_moe
 
-itp = implied_true_probability(original_odds, adjusted_roi)
+# --- Implied True Probability function ---
+def implied_true_probability(odds, roi):
+    payout = odds / 100 if odds > 0 else 100 / abs(odds)
+    return (roi + 1) / (payout + 1)
 
 # --- Expected ROI function ---
-def expected_roi(new_odds, true_prob):
-    payout = new_odds / 100 if new_odds > 0 else 100 / abs(new_odds)
+def expected_roi(odds, true_prob):
+    payout = odds / 100 if odds > 0 else 100 / abs(odds)
     return (true_prob * payout - (1 - true_prob)) * 100
 
+# --- ITP & Expected ROI using adjusted ROI ---
+itp = implied_true_probability(original_odds, adjusted_roi)
 expected = expected_roi(new_odds, itp)
 
-# --- ITP confidence bounds using adjusted ROI ± margin of error ---
-upper_itp = implied_true_probability(original_odds, adjusted_roi + adjusted_moe)
-lower_itp = implied_true_probability(original_odds, adjusted_roi - adjusted_moe)
-
-# --- Margin of Error for Bettor ROI ---
-roi_moe = z_score * (std_dev / math.sqrt(sample_size))
-roi_lower = adjusted_roi - roi_moe
-roi_upper = adjusted_roi + roi_moe
-
-# --- Implied True Probability bounds ---
-def implied_true_probability(original_odds, roi):
-    payout = original_odds / 100 if original_odds > 0 else 100 / abs(original_odds)
-    return (roi + 1) / (payout + 1)
-
+# --- Confidence intervals for ITP and Expected ROI ---
 upper_itp = implied_true_probability(original_odds, roi_upper)
 lower_itp = implied_true_probability(original_odds, roi_lower)
 
-# --- Expected ROI and confidence interval ---
-def expected_roi(new_odds, true_prob):
-    payout = new_odds / 100 if new_odds > 0 else 100 / abs(new_odds)
-    return (true_prob * payout - (1 - true_prob)) * 100
-
-expected = expected_roi(new_odds, implied_true_probability(original_odds, adjusted_roi))
-expected_lower = expected_roi(new_odds, lower_itp)
 expected_upper = expected_roi(new_odds, upper_itp)
+expected_lower = expected_roi(new_odds, lower_itp)
+expected_roi_moe = (expected_upper - expected_lower) / 2
 
-# --- Calculate Kelly Fraction (fraction of bankroll to wager) ---
+# --- Kelly Criterion ---
 def kelly_fraction(odds, win_prob):
     payout = odds / 100 if odds > 0 else 100 / abs(odds)
     b = payout
     q = 1 - win_prob
     kelly = (b * win_prob - q) / b
     return max(0, kelly)  # avoid negative bets
+
 kelly = kelly_fraction(new_odds, itp)
-kelly_half = kelly / 2  # safer version
+kelly_half = kelly / 2
+recommended_units = kelly_half * 100  # assume 1 unit = 1% of bankroll
 
-# Assume 1 unit = 1% of bankroll
-recommended_units = kelly_half * 100
-
-# --- Expected ROI bounds ---
-expected_roi_upper = expected_roi(new_odds, upper_itp)
-expected_roi_lower = expected_roi(new_odds, lower_itp)
-expected_roi_moe = (expected_roi_upper - expected_roi_lower) / 2
-
-# Margin of error on expected ROI
-expected_roi_moe = (expected_roi_upper - expected_roi_lower) / 2
-
-# Display results
+# --- Display Results ---
 st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
-st.markdown(f"**MoE on Bettor ROI (95% CI): ±{margin_of_error * 100:.2f}%**")
-st.markdown(f"**Bettor Confidence Interval:** {roi_lower:.2f}% to {roi_upper:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
+st.markdown("---")
 st.subheader(f"**Bayesian Adjusted Bettor ROI:** {adjusted_roi * 100:.2f}%")
+st.markdown(f"**95% CI:** {roi_lower * 100:.2f}% to {roi_upper * 100:.2f}%")
 st.markdown(f"**Adjusted MoE (95% CI): ±{adjusted_moe * 100:.2f}%**")
-st.markdown(f"**Adjusted Confidence Interval:** {(adjusted_roi - adjusted_moe) * 100:.2f}% to {(adjusted_roi + adjusted_moe) * 100:.2f}%")
 st.markdown("---")
 st.subheader(f"Expected ROI: {expected:.2f}%")
+st.markdown(f"**95% CI:** {expected_lower:.2f}% to {expected_upper:.2f}%")
 st.markdown(f"**MoE on Expected ROI (95% CI): ±{expected_roi_moe:.2f}%**")
-st.markdown(f"**Expected Confidence Interval:** {expected_lower:.2f}% to {expected_upper:.2f}%")
+st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")

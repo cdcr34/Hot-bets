@@ -84,12 +84,15 @@ recommended_units = kelly_half * 100  # assume 1 unit = 1% of bankroll
 st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
 st.markdown("---")
-st.subheader(f"**Bayesian Adjusted Bettor ROI:** {adjusted_roi * 100:.2f}%")
-with st.expander("What is Bayesian Adjusted ROI?"):
-    st.markdown("""
-    Bayesian adjustment 'shrinks' extreme ROI values toward a prior average (like 0%) when the sample size is small.
-    This prevents overreacting to short-term luck. As more data comes in, the adjusted ROI moves closer to the actual ROI.
-    """)
+col1, col2 = st.columns([6, 1])
+with col1:
+    st.subheader(f"Bayesian Adjusted Bettor ROI: {adjusted_roi * 100:.2f}%")
+with col2:
+    with st.expander("❓", expanded=False):
+        st.markdown("""
+        Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.
+        This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
+        """)
 st.markdown(f"**95% CI:** {roi_lower * 100:.2f}% to {roi_upper * 100:.2f}%")
 st.markdown(f"**Adjusted MoE (95% CI): ±{adjusted_moe * 100:.2f}%**")
 st.markdown("---")

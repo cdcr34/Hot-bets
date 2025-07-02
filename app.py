@@ -95,13 +95,15 @@ st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
 st.markdown("---")
-st.expander("What is the Kelly Criterion?"):
+with st.expander("What is the Kelly Criterion?"):
     st.markdown("""
-    The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.
+    The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.  
     It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
     """)
-st.expander("What is the Bayesian Model?"):
-        st.markdown("""
-        Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.
-        This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
-        """)
+
+with st.expander("What is the Bayesian Model?"):
+    st.markdown("""
+    Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.  
+    This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
+    """)
+    

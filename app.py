@@ -28,6 +28,14 @@ sample_size = int(row.iloc[0]['Sample Size'])
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
 new_odds = st.number_input("New Odds (your current odds)", value=-105)
 
+# --- Initialize session state for odds ---
+if "original_odds" not in st.session_state:
+    st.session_state.original_odds = -100
+if "new_odds" not in st.session_state:
+    st.session_state.new_odds = -105
+
+st.markdown("### 🎯 Odds Input")
+
 # --- Original Odds Input with +/- buttons ---
 st.markdown("**Original Odds (the odds the bettor got):**")
 col1, col2, col3 = st.columns([1, 2, 1])

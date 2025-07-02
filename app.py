@@ -84,15 +84,7 @@ recommended_units = kelly_half * 100  # assume 1 unit = 1% of bankroll
 st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
 st.markdown("---")
-col1, col2 = st.columns([6, 1])
-with col1:
-    st.subheader(f"Bayesian Adjusted Bettor ROI: {adjusted_roi * 100:.2f}%")
-with col2:
-    with st.expander("❓", expanded=False):
-        st.markdown("""
-        Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.
-        This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
-        """)
+st.subheader(f"Bayesian Adjusted Bettor ROI: {adjusted_roi * 100:.2f}%")
 st.markdown(f"**95% CI:** {roi_lower * 100:.2f}% to {roi_upper * 100:.2f}%")
 st.markdown(f"**Adjusted MoE (95% CI): ±{adjusted_moe * 100:.2f}%**")
 st.markdown("---")
@@ -102,8 +94,14 @@ st.markdown(f"**MoE on Expected ROI (95% CI): ±{expected_roi_moe:.2f}%**")
 st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
-with st.expander("What is the Kelly Criterion?"):
+st.markdown("---")
+st.expander("What is the Kelly Criterion?"):
     st.markdown("""
     The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.
     It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
     """)
+st.expander("What is the Bayesian Model?"):
+        st.markdown("""
+        Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.
+        This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
+        """)

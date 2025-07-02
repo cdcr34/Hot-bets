@@ -106,7 +106,7 @@ expected_roi_moe = (expected_roi_upper - expected_roi_lower) / 2
 # Display results
 st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
 st.markdown(f"**MoE on Bettor ROI (95% CI): ±{margin_of_error * 100:.2f}%**")
-st.markdown(f"**Bettor ROI (95% CI):** {roi_lower:.2f}% to {roi_upper:.2f}%")
+st.markdown(f"**Bettor Confidence Interval:** {roi_lower:.2f}% to {roi_upper:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
 st.subheader(f"**Bayesian Adjusted Bettor ROI:** {adjusted_roi * 100:.2f}%")
 st.markdown(f"**Adjusted MoE (95% CI): ±{adjusted_moe * 100:.2f}%**")
@@ -114,6 +114,6 @@ st.markdown(f"**Adjusted Confidence Interval:** {(adjusted_roi - adjusted_moe) *
 st.markdown("---")
 st.subheader(f"Expected ROI: {expected:.2f}%")
 st.markdown(f"**MoE on Expected ROI (95% CI): ±{expected_roi_moe:.2f}%**")
-st.markdown(f"**Expected ROI (95% CI):** {expected_lower:.2f}% to {expected_upper:.2f}%")
+st.markdown(f"**Expected Confidence Interval:** {expected_lower:.2f}% to {expected_upper:.2f}%")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")

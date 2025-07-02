@@ -26,17 +26,19 @@ sample_size = int(row.iloc[0]['Sample Size'])
 
 # --- User inputs odds ---
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
-new_odds = st.number_input("New Odds (your current odds)", value=-105)
-
-col_flip1, col_flip2 = st.columns(2)
-
-with col_flip1:
-    if st.button("Flip Original Odds (±)"):
+col_flip_orig, col_input_orig = st.columns([1, 4])
+with col_flip_orig:
+    if st.button("±", key="flip_original"):
         original_odds *= -1
-
-with col_flip2:
-    if st.button("Flip New Odds (±)"):
+with col_input_orig:
+    original_odds = st.number_input("", value=original_odds, key="original_odds_input")
+new_odds = st.number_input("New Odds (your current odds)", value=-105)
+col_flip_new, col_input_new = st.columns([1, 4])
+with col_flip_new:
+    if st.button("±", key="flip_new"):
         new_odds *= -1
+with col_input_new:
+    new_odds = st.number_input("", value=new_odds, key="new_odds_input")
 
 # --- Statistical parameters ---
 z_score = 1.96  # 95% confidence

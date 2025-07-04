@@ -112,6 +112,7 @@ st.markdown(f"**Signal-Weighted Expected ROI:** {weighted_expected_roi:.2f}%")
 st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
+st.markdown(f"**Signal-Weighted Recommended Units:** {signal_weighted_units:.2f} units")
 st.markdown(f"**Signal-Weighted Stake:** {signal_weighted_stake:.2%} of bankroll")
 st.markdown("---")
 st.subheader(f"Terms")
@@ -134,7 +135,7 @@ with st.expander("95% Confidence Interval"):
 with st.expander("Unit Size"):
     st.markdown("""
     For each bettor, 1 unit is defined as their **average bet size** over the last 3 months. 
-    This ensures ROI and stake sizing are scaled to that bettor’s typical risk level.
+    This ensures ROI and stake sizing are scaled to that bettor’s typical risk level. I value 1 unit as 1% of my bankroll.
     CAUTION: Some bettors choose to place multiple of the same bet, making the average bet size smaller
     """)
 

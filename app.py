@@ -92,6 +92,10 @@ kelly = kelly_fraction(new_odds, itp)
 kelly_half = kelly / 2
 recommended_units = kelly_half * 100  # assume 1 unit = 1% of bankroll
 
+# --- Signal-weighted Kelly stake ---
+signal_weighted_stake = kelly_half * signal_strength
+signal_weighted_units = signal_weighted_stake * 100  # units = % of bankroll
+
 # --- Display Results ---
 st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
@@ -108,6 +112,7 @@ st.markdown(f"**Signal-Weighted Expected ROI:** {weighted_expected_roi:.2f}%")
 st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
+st.markdown(f"**Signal-Weighted Stake:** {signal_weighted_stake:.2%} of bankroll")
 st.markdown("---")
 st.subheader(f"Terms")
 with st.expander("Sample Size"):

@@ -1,12 +1,12 @@
-﻿Bettor,Bet Type,ROI (%),Sample Size
-the_empty_room,Moneyline (MLB),7.5,127
-the_empty_room,Total (MLB),13.4,255
-FastEddieSports,Moneyline (MLB),11.6,678
-FastEddieSports,Spread (MLB),10.1,202
-VinnyG702,Spread (MLB),4.4,114
-VinnyG702,Total (MLB),11.9,278
-pabarney,Moneyline (MLB),5,128
-pabarney,Total (MLB),49.7,45
-Hawkspwn,Moneyline (MLB),10,477
-keith168,Spread (MLB),4.5,158
-keith168,Total (MLB),6.1,183
+﻿Bettor,Bet Type,ROI (%),Sample Size,Avg Bet Size
+the_empty_room,Moneyline (MLB),7.6,135,85.15
+the_empty_room,Total (MLB),9.8,265,87.43
+FastEddieSports,Moneyline (MLB),11.9,664,209.19
+FastEddieSports,Spread (MLB),11.6,193,159.07
+VinnyG702,Spread (MLB),3.7,132,87.04
+VinnyG702,Total (MLB),8.8,307,91.32
+pabarney,Moneyline (MLB),5.6,131,122.73
+pabarney,Total (MLB),54.4,50,188
+Hawkspwn,Moneyline (MLB),6.2,541,332.99
+keith168,Spread (MLB),5.9,188,9.04
+keith168,Total (MLB),9.5,218,10.01

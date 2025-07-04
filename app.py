@@ -9,10 +9,6 @@ df = pd.read_csv("bettor_stats.csv")
 st.sidebar.header("Select Bettor & Bet Type")
 bettor = st.sidebar.selectbox("Bettor", sorted(df['Bettor'].unique()))
 
-# Display the average bet size in units
-avg_bet_size_units = row.iloc[0]['Avg Bet Size']
-st.markdown(f"**Avg Bet Size:** {avg_bet_size_units:.2f} units (This defines 1 unit for this bettor)")
-
 # Only show bet types this bettor has data for
 bettor_df = df[df['Bettor'] == bettor]
 available_bet_types = sorted(bettor_df['Bet Type'].dropna().unique())
@@ -23,6 +19,10 @@ row = df[(df['Bettor'] == bettor) & (df['Bet Type'] == bet_type)]
 if row.empty:
     st.error("No ROI data for that bettor + bet type.")
     st.stop()
+
+# Display the average bet size in units
+avg_bet_size_units = row.iloc[0]['Avg Bet Size']
+st.markdown(f"**Avg Bet Size:** {avg_bet_size_units:.2f} units (This defines 1 unit for this bettor)")
 
 # --- Extract ROI and sample size ---
 roi_decimal = row.iloc[0]['ROI (%)'] / 100

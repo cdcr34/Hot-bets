@@ -36,10 +36,6 @@ specific_bet_size = st.number_input(
     step=0.1
 )
 
-# Display the average bet size in units
-signal_strength = specific_bet_size / avg_bet_size_units
-weighted_expected_roi = expected * signal_strength
-
 # --- Statistical parameters ---
 z_score = 1.96  # 95% confidence
 std_dev = 1.0   # conservative std dev for ROI
@@ -71,6 +67,10 @@ def expected_roi(odds, true_prob):
 # --- ITP & Expected ROI using adjusted ROI ---
 itp = implied_true_probability(original_odds, adjusted_roi)
 expected = expected_roi(new_odds, itp)
+
+# Display the average bet size in units
+signal_strength = specific_bet_size / avg_bet_size_units
+weighted_expected_roi = expected * signal_strength
 
 # --- Confidence intervals for ITP and Expected ROI ---
 upper_itp = implied_true_probability(original_odds, roi_upper)

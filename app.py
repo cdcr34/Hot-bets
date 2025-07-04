@@ -25,6 +25,7 @@ roi_decimal = row.iloc[0]['ROI (%)'] / 100
 sample_size = int(row.iloc[0]['Sample Size'])
 
 avg_bet_size_units = row.iloc[0]['Avg Bet Size']
+expected = expected_roi(new_odds, itp)
 
 # --- User inputs odds ---
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)

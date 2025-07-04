@@ -30,7 +30,7 @@ avg_bet_size_units = row.iloc[0]['Avg Bet Size']
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
 new_odds = st.number_input("New Odds (your current odds)", value=-105)
 specific_bet_size = st.number_input(
-    "How Big Was the Bettor's Bet? (in units)", 
+    "How Big Was the Bettor's Bet?", 
     value=float(avg_bet_size_units), 
     min_value=0.0, 
     step=0.1
@@ -109,6 +109,13 @@ st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
 st.markdown("---")
+st.subheader(f"Terms")
+with st.expander("What does Unit Size mean?"):
+    st.markdown("""
+    For each bettor, 1 unit is defined as their **average bet size** over the last 3 months. 
+    This ensures ROI and stake sizing are scaled to that bettor’s typical risk level.
+    """)
+
 with st.expander("What is the Kelly Criterion?"):
     st.markdown("""
     The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.  
@@ -119,10 +126,4 @@ with st.expander("What is the Bayesian Model?"):
     st.markdown("""
     Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.  
     This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
-    """)
-
-with st.expander("What does Unit Size mean?"):
-    st.markdown("""
-    For each bettor, 1 unit is defined as their **average bet size** over the last 3 months. 
-    This ensures ROI and stake sizing are scaled to that bettor’s typical risk level.
     """)

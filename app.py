@@ -110,20 +110,45 @@ st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")
 st.markdown("---")
 st.subheader(f"Terms")
-with st.expander("What does Unit Size mean?"):
+with st.expander("Sample Size"):
+    st.markdown("""
+    The number of bets included in the analysis. A larger sample size increases the reliability of the ROI estimate.
+    """)
+
+with st.expander("Margin of Error"):
+    st.markdown("""
+    An estimate of how much the true ROI might differ from the observed ROI due to randomness. Calculated based on sample size and assumed variance.
+    """)
+
+with st.expander("95% Confidence Interval"):
+    st.markdown("""
+    The range in which the true ROI is expected to lie 95% of the time. Wider intervals suggest less certainty, usually due to smaller sample sizes.
+    """)
+
+with st.expander("Unit Size"):
     st.markdown("""
     For each bettor, 1 unit is defined as their **average bet size** over the last 3 months. 
     This ensures ROI and stake sizing are scaled to that bettor’s typical risk level.
     """)
 
-with st.expander("What is the Kelly Criterion?"):
-    st.markdown("""
-    The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.  
-    It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
-    """)
-
-with st.expander("What is the Bayesian Model?"):
+with st.expander("Bayesian Adjusted Bettor ROI"):
     st.markdown("""
     Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.  
     This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
+    """)
+
+with st.expander("Expected ROI"):
+    st.markdown("""
+    The profit you expect to make on average per dollar bet, based on the bettor's implied true win probability and your current odds.
+    """)
+
+with st.expander("Signal-Weighted Expected ROI"):
+    st.markdown("""
+    The Expected ROI adjusted based on how large the bettor's stake was compared to their average. A larger bet implies higher confidence, increasing the weight of the ROI estimate.
+    """)
+
+with st.expander("Recomended Units to bet (Kelly Criterion)"):
+    st.markdown("""
+    The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.  
+    It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
     """)

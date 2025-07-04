@@ -24,6 +24,8 @@ if row.empty:
 roi_decimal = row.iloc[0]['ROI (%)'] / 100
 sample_size = int(row.iloc[0]['Sample Size'])
 
+avg_bet_size_units = row.iloc[0]['Avg Bet Size']
+
 # --- User inputs odds ---
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
 new_odds = st.number_input("New Odds (your current odds)", value=-105)
@@ -35,7 +37,6 @@ specific_bet_size = st.number_input(
 )
 
 # Display the average bet size in units
-avg_bet_size_units = row.iloc[0]['Avg Bet Size']
 signal_strength = specific_bet_size / avg_bet_size_units
 weighted_expected_roi = expected * signal_strength
 

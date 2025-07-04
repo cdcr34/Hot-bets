@@ -20,10 +20,6 @@ if row.empty:
     st.error("No ROI data for that bettor + bet type.")
     st.stop()
 
-# Display the average bet size in units
-avg_bet_size_units = row.iloc[0]['Avg Bet Size']
-st.markdown(f"**Avg Bet Size:** {avg_bet_size_units:.2f} units (This defines 1 unit for this bettor)")
-
 # --- Extract ROI and sample size ---
 roi_decimal = row.iloc[0]['ROI (%)'] / 100
 sample_size = int(row.iloc[0]['Sample Size'])
@@ -31,6 +27,10 @@ sample_size = int(row.iloc[0]['Sample Size'])
 # --- User inputs odds ---
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
 new_odds = st.number_input("New Odds (your current odds)", value=-105)
+
+# Display the average bet size in units
+avg_bet_size_units = row.iloc[0]['Avg Bet Size']
+st.markdown(f"**Avg Bet Size:** {avg_bet_size_units:.2f} units (This defines 1 unit for this bettor)")
 
 # --- Statistical parameters ---
 z_score = 1.96  # 95% confidence

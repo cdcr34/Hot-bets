@@ -27,9 +27,17 @@ sample_size = int(row.iloc[0]['Sample Size'])
 # --- User inputs odds ---
 original_odds = st.number_input("Original Odds (the odds the bettor got)", value=-100)
 new_odds = st.number_input("New Odds (your current odds)", value=-105)
+specific_bet_size = st.number_input(
+    "How Big Was the Bettor's Bet? (in units)", 
+    value=float(avg_bet_size_units), 
+    min_value=0.0, 
+    step=0.1
+)
 
 # Display the average bet size in units
 avg_bet_size_units = row.iloc[0]['Avg Bet Size']
+signal_strength = specific_bet_size / avg_bet_size_units
+weighted_expected_roi = expected * signal_strength
 
 # --- Statistical parameters ---
 z_score = 1.96  # 95% confidence
@@ -95,6 +103,7 @@ st.markdown("---")
 st.subheader(f"Expected ROI: {expected:.2f}%")
 st.markdown(f"**95% CI:** {expected_lower:.2f}% to {expected_upper:.2f}%")
 st.markdown(f"**MoE on Expected ROI (95% CI): ±{expected_roi_moe:.2f}%**")
+st.markdown(f"**Signal-Weighted Expected ROI:** {weighted_expected_roi:.2f}%")
 st.markdown("---")
 st.subheader(f"**Recommended Units to Bet:** {recommended_units:.2f} units")
 st.markdown(f"**Recommended Stake (Half-Kelly):** {kelly_half:.2%} of bankroll")

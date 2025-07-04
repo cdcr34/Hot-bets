@@ -122,7 +122,8 @@ with st.expander("Margin of Error"):
 
 with st.expander("95% Confidence Interval"):
     st.markdown("""
-    The range in which the true ROI is expected to lie 95% of the time. Wider intervals suggest less certainty, usually due to smaller sample sizes.
+    A range calculated from the data that, if we repeated the process many times, would contain the true ROI 95% of the time. 
+    It reflects uncertainty in the estimate — wider intervals mean less precision, often due to smaller sample sizes or higher variance.
     """)
 
 with st.expander("Unit Size"):

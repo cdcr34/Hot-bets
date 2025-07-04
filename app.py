@@ -130,6 +130,7 @@ with st.expander("Unit Size"):
     st.markdown("""
     For each bettor, 1 unit is defined as their **average bet size** over the last 3 months. 
     This ensures ROI and stake sizing are scaled to that bettor’s typical risk level.
+    CAUTION: Some bettors choose to place multiple of the same bet, making the average bet size smaller
     """)
 
 with st.expander("Bayesian Adjusted Bettor ROI"):
@@ -146,6 +147,7 @@ with st.expander("Expected ROI"):
 with st.expander("Signal-Weighted Expected ROI"):
     st.markdown("""
     The Expected ROI adjusted based on how large the bettor's stake was compared to their average. A larger bet implies higher confidence, increasing the weight of the ROI estimate.
+    CAUTION: Some bettors choose to place multiple of the same bet, making the average bet size smaller
     """)
 
 with st.expander("Recomended Units to bet (Kelly Criterion)"):

@@ -9,6 +9,10 @@ df = pd.read_csv("bettor_stats.csv")
 st.sidebar.header("Select Bettor & Bet Type")
 bettor = st.sidebar.selectbox("Bettor", sorted(df['Bettor'].unique()))
 
+# Display the average bet size in units
+avg_bet_size_units = row.iloc[0]['Avg Bet Size']
+st.markdown(f"**Avg Bet Size:** {avg_bet_size_units:.2f} units (This defines 1 unit for this bettor)")
+
 # Only show bet types this bettor has data for
 bettor_df = df[df['Bettor'] == bettor]
 available_bet_types = sorted(bettor_df['Bet Type'].dropna().unique())
@@ -83,6 +87,7 @@ recommended_units = kelly_half * 100  # assume 1 unit = 1% of bankroll
 # --- Display Results ---
 st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
 st.markdown(f"**Sample Size:** {sample_size} bets")
+st.markdown(f"**Avg Bet Size:** {avg_bet_size_units:.2f} units
 st.markdown("---")
 st.subheader(f"Bayesian Adjusted Bettor ROI: {adjusted_roi * 100:.2f}%")
 st.markdown(f"**95% CI:** {roi_lower * 100:.2f}% to {roi_upper * 100:.2f}%")
@@ -106,4 +111,9 @@ with st.expander("What is the Bayesian Model?"):
     Bayesian-adjusted ROI "shrinks" extreme values toward 0% based on sample size.  
     This helps reduce overconfidence from small datasets while allowing stronger signals from larger ones.
     """)
-    
+
+with st.expander("What does Unit Size mean?"):
+    st.markdown("""
+    For each bettor, 1 unit is defined as their **average bet size** over the last 3 months. 
+    This ensures ROI and stake sizing are scaled to that bettor’s typical risk level.
+    """)

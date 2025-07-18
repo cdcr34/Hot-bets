@@ -117,6 +117,23 @@ with tab1:
     st.markdown(f"**Signal-Weighted Stake:** {signal_weighted_stake:.2%} of bankroll")
 
 with tab2:
+    
+    def calculate_recommended_units(row, original_odds, new_odds):
+    roi_decimal = row['ROI (%)'] / 100
+    sample_size = int(row['Sample Size'])
+    avg_bet_size_units = row['Avg Bet Size']
+
+    margin_of_error = z_score * (std_dev / math.sqrt(sample_size))
+    shrink_weight = sample_size / (sample_size + k)
+    adjusted_roi = shrink_weight * roi_decimal + (1 - shrink_weight) * prior_mean
+
+    itp = implied_true_probability(original_odds, adjusted_roi)
+    kelly = kelly_fraction(new_odds, itp)
+    kelly_half = kelly / 2
+    recommended_units = kelly_half * 100
+
+    return recommended_units
+
     st.header("Multi-Bettor Signal")
 
     st.markdown("Select two bettors who made the same pick to calculate a correlation-adjusted recommendation.")
@@ -133,8 +150,8 @@ with tab2:
         st.error("No ROI data for one or both bettors for this bet type.")
     else:
         # Get user-facing bet size recommendations directly
-        bettor1_units = row1.iloc[0]['Recommended Units']
-        bettor2_units = row2.iloc[0]['Recommended Units']
+        bettor1_units = calculate_recommended_units(row1.iloc[0], odds1, new_odds)
+        bettor2_units = calculate_recommended_units(row2.iloc[0], odds2, new_odds)
 
         correlation = st.slider("Estimated Correlation Between Bettors (0 = Independent, 1 = Identical)", 0.0, 1.0, 0.5, 0.05)
 

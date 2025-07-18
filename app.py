@@ -116,7 +116,6 @@ with tab1:
     st.markdown(f"**Signal-Weighted Recommended Units:** {signal_weighted_units:.2f} units")
     st.markdown(f"**Signal-Weighted Stake:** {signal_weighted_stake:.2%} of bankroll")
 
-# --- Multi-Bettor Signal Tab ---
 with tab2:
     st.header("Multi-Bettor Signal")
 
@@ -133,38 +132,14 @@ with tab2:
     if row1.empty or row2.empty:
         st.error("No ROI data for one or both bettors for this bet type.")
     else:
-        roi_1 = row1.iloc[0]['ROI (%)'] / 100
-        sample_size_1 = int(row1.iloc[0]['Sample Size'])
-
-        roi_2 = row2.iloc[0]['ROI (%)'] / 100
-        sample_size_2 = int(row2.iloc[0]['Sample Size'])
-
-        odds = st.number_input("Odds (Assuming Same for Both Bettors and You)", value=-110, key="odds_shared")
+        # Get user-facing bet size recommendations directly
+        bettor1_units = row1.iloc[0]['Recommended Units']
+        bettor2_units = row2.iloc[0]['Recommended Units']
 
         correlation = st.slider("Estimated Correlation Between Bettors (0 = Independent, 1 = Identical)", 0.0, 1.0, 0.5, 0.05)
 
-        # Bayesian shrinkage
-        def bayesian_shrink(roi, sample_size, prior=0, prior_weight=30):
-            weight = sample_size / (sample_size + prior_weight)
-            return weight * roi + (1 - weight) * prior
-
-        adj_roi_1 = bayesian_shrink(roi_1, sample_size_1)
-        adj_roi_2 = bayesian_shrink(roi_2, sample_size_2)
-
-        # Kelly fraction calculator
-        def kelly_fraction(odds, edge):
-            if odds < 0:
-                b = 100 / abs(odds)
-            else:
-                b = odds / 100
-            return max((b * edge) / (b + 1), 0)
-
-        f1 = kelly_fraction(odds, adj_roi_1) / 2  # half-Kelly
-        f2 = kelly_fraction(odds, adj_roi_2) / 2
-
-        adjusted_units = f1 + f2 - correlation * min(f1, f2)
+        adjusted_units = bettor1_units + bettor2_units - correlation * min(bettor1_units, bettor2_units)
 
         st.markdown("### Multi-Bettor Recommendation")
         st.markdown(f"**Recommended Bet Size (units)**: {adjusted_units:.2f}")
-        st.caption("This bet size accounts for agreement and overlap between bettors using a correlation factor.")
-
+        st.caption("This bet size uses each bettor's raw unit recommendation and adjusts for correlation.")

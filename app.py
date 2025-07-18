@@ -120,7 +120,7 @@ with tab1:
 with tab2:
     st.header("Multi-Bettor Signal")
 
-    st.markdown("Select two bettors who made the same pick to calculate a signal-weighted recommendation.")
+    st.markdown("Select two bettors who made the same pick to calculate a combined bet size recommendation.")
 
     bettor1 = st.selectbox("First Bettor", sorted(df['Bettor'].unique()), key="bettor1")
     bettor2 = st.selectbox("Second Bettor", sorted(df['Bettor'].unique()), key="bettor2")
@@ -143,11 +143,10 @@ with tab2:
         odds_2 = st.number_input("Odds Bettor 2 Got", value=-110, key="odds2")
         user_odds = st.number_input("Odds You Can Bet At", value=-110, key="user_odds")
 
-        # Bayesian shrinkage
+        # Bayesian shrinkage function assumed defined elsewhere
         adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
         adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
 
-        # Kelly function
         def kelly_fraction(odds, edge):
             if odds < 0:
                 b = 100 / abs(odds)
@@ -155,22 +154,13 @@ with tab2:
                 b = odds / 100
             return max((b * edge) / (b + 1), 0)
 
-        # Combine edges using precision-weighted average
-        variance_1 = 1 / max(sample_size_1, 1)
-        variance_2 = 1 / max(sample_size_2, 1)
+        # Compute half-Kelly bet sizes for each bettor
+        kelly_1 = kelly_fraction(odds_1, adjusted_roi_1) / 2
+        kelly_2 = kelly_fraction(odds_2, adjusted_roi_2) / 2
 
-        weight_1 = 1 / variance_1
-        weight_2 = 1 / variance_2
+        # Combine by adding half Kelly bets (since same bet)
+        combined_kelly = kelly_1 + kelly_2
 
-        combined_edge = (adjusted_roi_1 * weight_1 + adjusted_roi_2 * weight_2) / (weight_1 + weight_2)
-
-        # Apply Kelly with user odds
-        combined_kelly = kelly_fraction(user_odds, combined_edge)
-
-        # Half Kelly for safer staking
-        recommended_units = 0.5 * combined_kelly
-
-        st.markdown("### Multi-Bettor Recommendation")
-        st.markdown(f"**Recommended Bet Size (units)**: {recommended_units:.2f}")
-        st.caption("This bet size accounts for both bettors' performance and confidence using a weighted Bayesian average.")
-
+        st.markdown("### Multi-Bettor Combined Recommendation")
+        st.markdown(f"**Recommended Bet Size (units):** {combined_kelly:.2f}")
+        st.caption("Sum of each bettor's half-Kelly recommended bet sizes for the same bet.")

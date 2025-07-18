@@ -119,20 +119,20 @@ with tab1:
 with tab2:
     
     def calculate_recommended_units(row, original_odds, new_odds):
-    roi_decimal = row['ROI (%)'] / 100
-    sample_size = int(row['Sample Size'])
-    avg_bet_size_units = row['Avg Bet Size']
+        roi_decimal = row['ROI (%)'] / 100
+        sample_size = int(row['Sample Size'])
+        avg_bet_size_units = row['Avg Bet Size']
 
-    margin_of_error = z_score * (std_dev / math.sqrt(sample_size))
-    shrink_weight = sample_size / (sample_size + k)
-    adjusted_roi = shrink_weight * roi_decimal + (1 - shrink_weight) * prior_mean
+        margin_of_error = z_score * (std_dev / math.sqrt(sample_size))
+        shrink_weight = sample_size / (sample_size + k)
+        adjusted_roi = shrink_weight * roi_decimal + (1 - shrink_weight) * prior_mean
 
-    itp = implied_true_probability(original_odds, adjusted_roi)
-    kelly = kelly_fraction(new_odds, itp)
-    kelly_half = kelly / 2
-    recommended_units = kelly_half * 100
+        itp = implied_true_probability(original_odds, adjusted_roi)
+        kelly = kelly_fraction(new_odds, itp)
+        kelly_half = kelly / 2
+        recommended_units = kelly_half * 100
 
-    return recommended_units
+        return recommended_units
 
     st.header("Multi-Bettor Signal")
 

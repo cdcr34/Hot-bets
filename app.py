@@ -134,6 +134,11 @@ with tab2:
 
         return recommended_units
 
+    # Number inputs for odds (MUST come before function call)
+    odds1 = st.number_input("Original Odds - Bettor 1", value=-110, key="odds1")
+    odds2 = st.number_input("Original Odds - Bettor 2", value=-110, key="odds2")
+    new_odds = st.number_input("Your Odds", value=-105, key="new_odds")
+
     st.header("Multi-Bettor Signal")
 
     st.markdown("Select two bettors who made the same pick to calculate a correlation-adjusted recommendation.")

@@ -180,13 +180,6 @@ with st.expander("Recomended Units to bet (Kelly Criterion)"):
 elif app_mode == "Multi-Bettor Signal":
     # Your multi-bettor signal code here...
 
-# --- New Multi-Bettor Signal tab ---
-st.sidebar.header("Select App Mode")
-app_mode = st.sidebar.radio("Choose Mode:", ["Bet Size Signal", "Multi-Bettor Signal"])
-
-if app_mode == "Multi-Bettor Signal":
-    st.title("Multi-Bettor Signal")
-
     # Select two bettors
     bettor_list = sorted(df['Bettor'].unique())
     bettor1 = st.selectbox("Select Bettor 1", bettor_list, key="bettor1")

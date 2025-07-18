@@ -2,6 +2,14 @@ import streamlit as st
 import pandas as pd
 import math
 
+def bayesian_shrink(roi, sample_size, prior=0, prior_weight=30):
+    """
+    Shrinks ROI toward a prior (default 0) based on sample size.
+    Higher sample size = less shrinkage. Lower sample size = more.
+    """
+    weight = sample_size / (sample_size + prior_weight)
+    return weight * roi + (1 - weight) * prior
+
 # Load the spreadsheet
 df = pd.read_csv("bettor_stats.csv")
 

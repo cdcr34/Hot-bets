@@ -147,7 +147,7 @@ with tab2:
         adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
         adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
 
-        # Kelly fractions
+        # Kelly function
         def kelly_fraction(odds, edge):
             if odds < 0:
                 b = 100 / abs(odds)
@@ -155,17 +155,22 @@ with tab2:
                 b = odds / 100
             return max((b * edge) / (b + 1), 0)
 
-        edge_1 = adjusted_roi_1
-        edge_2 = adjusted_roi_2
+        # Combine edges using precision-weighted average
+        variance_1 = 1 / max(sample_size_1, 1)
+        variance_2 = 1 / max(sample_size_2, 1)
 
-        kelly_1 = kelly_fraction(odds_1, edge_1) / 2  # Half Kelly
-        kelly_2 = kelly_fraction(odds_2, edge_2) / 2  # Half Kelly
+        weight_1 = 1 / variance_1
+        weight_2 = 1 / variance_2
 
-        # Adjusted logic for combining signals with correlation penalty
-        correlation_penalty = 0.5  # Assume moderate correlation
-        overlap_penalty = correlation_penalty * min(kelly_1, kelly_2)
-        adjusted_bet = kelly_1 + kelly_2 - overlap_penalty
+        combined_edge = (adjusted_roi_1 * weight_1 + adjusted_roi_2 * weight_2) / (weight_1 + weight_2)
+
+        # Apply Kelly with user odds
+        combined_kelly = kelly_fraction(user_odds, combined_edge)
+
+        # Half Kelly for safer staking
+        recommended_units = 0.5 * combined_kelly
 
         st.markdown("### Multi-Bettor Recommendation")
-        st.markdown(f"**Recommended Bet Size (units)**: {adjusted_bet:.2f}")
-        st.caption("This bet size accounts for both bettors' performance and penalizes for correlated overlap.")
+        st.markdown(f"**Recommended Bet Size (units)**: {recommended_units:.2f}")
+        st.caption("This bet size accounts for both bettors' performance and confidence using a weighted Bayesian average.")
+

@@ -116,74 +116,58 @@ with tab1:
     st.markdown(f"**Signal-Weighted Recommended Units:** {signal_weighted_units:.2f} units")
     st.markdown(f"**Signal-Weighted Stake:** {signal_weighted_stake:.2%} of bankroll")
 
-# ---------------- Tab 2 ----------------
+# --- Multi-Bettor Signal Tab ---
 with tab2:
     st.header("Multi-Bettor Signal")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        bettor_1 = st.selectbox("Bettor 1", sorted(df['Bettor'].unique()), key="bettor_1")
-    with col2:
-        bettor_2 = st.selectbox("Bettor 2", sorted(df['Bettor'].unique()), key="bettor_2")
+    st.markdown("Select two bettors who made the same pick to calculate a signal-weighted recommendation.")
 
-    bet_type_1 = st.selectbox("Bet Type for Bettor 1", sorted(df[df['Bettor'] == bettor_1]['Bet Type'].dropna().unique()), key="bt1")
-    bet_type_2 = st.selectbox("Bet Type for Bettor 2", sorted(df[df['Bettor'] == bettor_2]['Bet Type'].dropna().unique()), key="bt2")
+    bettor1 = st.selectbox("First Bettor", sorted(df['Bettor'].unique()), key="bettor1")
+    bettor2 = st.selectbox("Second Bettor", sorted(df['Bettor'].unique()), key="bettor2")
 
-# --- Filter data for each bettor ---
-row_1 = df[(df['Bettor'] == bettor_1) & (df['Bet Type'] == bet_type_1)]
-row_2 = df[(df['Bettor'] == bettor_2) & (df['Bet Type'] == bet_type_2)]
+    bet_type_multi = st.selectbox("Bet Type", sorted(df['Bet Type'].dropna().unique()), key="bet_type_multi")
 
-if row_1.empty or row_2.empty:
-    st.error("Missing ROI data for one or both bettors.")
-    st.stop()
+    row1 = df[(df['Bettor'] == bettor1) & (df['Bet Type'] == bet_type_multi)]
+    row2 = df[(df['Bettor'] == bettor2) & (df['Bet Type'] == bet_type_multi)]
 
-# --- Extract ROI and sample size ---
-roi_1 = row_1.iloc[0]['ROI (%)'] / 100
-sample_size_1 = int(row_1.iloc[0]['Sample Size'])
-avg_bet_size_1 = row_1.iloc[0]['Avg Bet Size']
+    if row1.empty or row2.empty:
+        st.error("No ROI data for one or both bettors for this bet type.")
+    else:
+        roi_1 = row1.iloc[0]['ROI (%)'] / 100
+        sample_size_1 = int(row1.iloc[0]['Sample Size'])
 
-roi_2 = row_2.iloc[0]['ROI (%)'] / 100
-sample_size_2 = int(row_2.iloc[0]['Sample Size'])
-avg_bet_size_2 = row_2.iloc[0]['Avg Bet Size']
+        roi_2 = row2.iloc[0]['ROI (%)'] / 100
+        sample_size_2 = int(row2.iloc[0]['Sample Size'])
 
-# --- User inputs ---
-odds_1 = st.number_input(f"{bettor_1}'s Odds", value=-110, key="odds_1")
-odds_2 = st.number_input(f"{bettor_2}'s Odds", value=-110, key="odds_2")
-user_odds = st.number_input("Your Current Odds", value=-110, key="multi_user_odds")
+        odds_1 = st.number_input("Odds Bettor 1 Got", value=-110, key="odds1")
+        odds_2 = st.number_input("Odds Bettor 2 Got", value=-110, key="odds2")
+        user_odds = st.number_input("Odds You Can Bet At", value=-110, key="user_odds")
 
-specific_bet_size_1 = st.number_input(f"{bettor_1}'s Bet Size (in units)", value=float(avg_bet_size_1), min_value=0.0, step=0.1)
-specific_bet_size_2 = st.number_input(f"{bettor_2}'s Bet Size (in units)", value=float(avg_bet_size_2), min_value=0.0, step=0.1)
+        # Bayesian shrinkage
+        adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
+        adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
 
-# --- Shrink ROI for both bettors ---
-adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
-adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
+        # Kelly fractions
+        def kelly_fraction(odds, edge):
+            if odds < 0:
+                b = 100 / abs(odds)
+            else:
+                b = odds / 100
+            return max((b * edge) / (b + 1), 0)
 
-# --- Signal strength from bet size relative to average ---
-signal_strength_1 = specific_bet_size_1 / avg_bet_size_1
-signal_strength_2 = specific_bet_size_2 / avg_bet_size_2
+        edge_1 = adjusted_roi_1
+        edge_2 = adjusted_roi_2
 
-# --- Implied true probabilities ---
-p1 = implied_true_probability(odds_1, adjusted_roi_1)
-p2 = implied_true_probability(odds_2, adjusted_roi_2)
+        kelly_1 = kelly_fraction(odds_1, edge_1)
+        kelly_2 = kelly_fraction(odds_2, edge_2)
 
-# --- Weight each bettor's signal by sample size and bet size ---
-weight_1 = sample_size_1 * signal_strength_1
-weight_2 = sample_size_2 * signal_strength_2
+        weight_1 = math.sqrt(sample_size_1)
+        weight_2 = math.sqrt(sample_size_2)
+        total_weight = weight_1 + weight_2
 
-# --- Weighted average of implied probabilities ---
-combined_itp = (p1 * weight_1 + p2 * weight_2) / (weight_1 + weight_2)
+        combined_kelly = (kelly_1 * weight_1 + kelly_2 * weight_2) / total_weight
 
-# --- Expected ROI at user's odds ---
-multi_expected_roi = expected_roi(user_odds, combined_itp)
+        st.markdown("### Multi-Bettor Recommendation")
+        st.markdown(f"**Recommended Bet Size (units)**: {combined_kelly:.2f}")
+        st.caption("This bet size accounts for both bettors' performance and confidence.")
 
-# --- Kelly fraction ---
-kelly_fraction_multi = kelly_fraction(user_odds, combined_itp)
-recommended_units_multi = kelly_fraction_multi / 2 * 100  # Half-Kelly, converted to units
-
-# --- Display Results ---
-st.markdown("### Multi-Bettor Signal Results")
-st.markdown(f"**Adjusted ROI ({bettor_1})**: {adjusted_roi_1:.2%}")
-st.markdown(f"**Adjusted ROI ({bettor_2})**: {adjusted_roi_2:.2%}")
-st.markdown(f"**Combined Implied Win Probability**: {combined_itp:.2%}")
-st.markdown(f"**Expected ROI (Your Odds)**: {multi_expected_roi:.2%}")
-st.markdown(f"**Recommended Stake**: {recommended_units_multi:.2f} units (Half Kelly)")

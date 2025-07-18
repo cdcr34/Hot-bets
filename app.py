@@ -163,3 +163,79 @@ with st.expander("Recomended Units to bet (Kelly Criterion)"):
     The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.  
     It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
     """)
+
+# --- Multi-Bettor Signal Tab ---
+with st.container():
+    st.header("Multi-Bettor Signal")
+    st.markdown("Input multiple bettors and their bets to combine signals and calculate a recommended bet size.")
+
+    # --- Input for multiple bettors ---
+    bettor_1 = st.selectbox("Select Bettor 1", sorted(df['Bettor'].unique()), key="bettor1")
+    bettor_2 = st.selectbox("Select Bettor 2", sorted(df['Bettor'].unique()), key="bettor2")
+
+    # --- User inputs odds ---
+    user_odds = st.number_input("Your Current Odds", value=-110, key="user_odds")
+
+    # --- Fetch data for both bettors ---
+    def get_bettor_data(bettor):
+        sub_df = df[(df['Bettor'] == bettor)]
+        sub_df = sub_df[sub_df['ROI (%)'].notnull() & sub_df['Sample Size'].notnull()]
+        if sub_df.empty:
+            return None
+        roi = sub_df.iloc[0]['ROI (%)'] / 100
+        sample_size = int(sub_df.iloc[0]['Sample Size'])
+        avg_bet_size = sub_df.iloc[0]['Avg Bet Size']
+        return roi, sample_size, avg_bet_size
+
+    bettor_data_1 = get_bettor_data(bettor_1)
+    bettor_data_2 = get_bettor_data(bettor_2)
+
+    if not bettor_data_1 or not bettor_data_2:
+        st.warning("Missing data for one or both bettors.")
+    else:
+        # Extract and apply Bayesian shrinkage
+        def adjust_roi(roi, n, k=100, prior=0.0):
+            shrink_weight = n / (n + k)
+            return shrink_weight * roi + (1 - shrink_weight) * prior
+
+        roi1_adj = adjust_roi(*bettor_data_1[:2])
+        roi2_adj = adjust_roi(*bettor_data_2[:2])
+
+        # Calculate implied true probabilities
+        def implied_true_prob(odds, roi):
+            payout = odds / 100 if odds > 0 else 100 / abs(odds)
+            return (roi + 1) / (payout + 1)
+
+        # Assume both bettors got the same odds (user can tweak later)
+        bettor_odds = st.number_input("Odds Both Bettors Got", value=-110, key="bettor_odds")
+
+        prob1 = implied_true_prob(bettor_odds, roi1_adj)
+        prob2 = implied_true_prob(bettor_odds, roi2_adj)
+
+        # Combine probabilities (average, could be weighted)
+        combined_prob = (prob1 + prob2) / 2
+
+        # Expected ROI at user's odds
+        def expected_roi(odds, prob):
+            payout = odds / 100 if odds > 0 else 100 / abs(odds)
+            return (prob * payout - (1 - prob)) * 100
+
+        combined_expected_roi = expected_roi(user_odds, combined_prob)
+
+        # Kelly Criterion
+        def kelly_fraction(odds, win_prob):
+            payout = odds / 100 if odds > 0 else 100 / abs(odds)
+            b = payout
+            q = 1 - win_prob
+            kelly = (b * win_prob - q) / b
+            return max(0, kelly)
+
+        kelly = kelly_fraction(user_odds, combined_prob)
+        half_kelly_units = kelly / 2 * 100
+
+        st.subheader("Results")
+        st.markdown(f"**Bettor 1 Adjusted ROI:** {roi1_adj * 100:.2f}%")
+        st.markdown(f"**Bettor 2 Adjusted ROI:** {roi2_adj * 100:.2f}%")
+        st.markdown(f"**Combined Implied Win Probability:** {combined_prob:.4f}")
+        st.markdown(f"**Expected ROI at Your Odds:** {combined_expected_roi:.2f}%")
+        st.markdown(f"**Recommended Bet Size (Half Kelly):** {half_kelly_units:.2f} units")

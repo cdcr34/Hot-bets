@@ -143,31 +143,42 @@ with tab2:
         odds_2 = st.number_input("Odds Bettor 2 Got", value=-110, key="odds2")
         user_odds = st.number_input("Odds You Can Bet At", value=-110, key="user_odds")
 
-        # Bayesian shrinkage
+        # Bayesian shrinkage function
+        def bayesian_shrink(roi, n, k=100, prior_mean=0.0, std_dev=1.0, z_score=1.96):
+            margin_error = z_score * (std_dev / math.sqrt(n))
+            shrink = n / (n + k)
+            adj_roi = shrink * roi + (1 - shrink) * prior_mean
+            return adj_roi
+
         adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
         adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
 
-        # Kelly fractions
+        # Kelly fraction function (returns fraction of bankroll to bet)
         def kelly_fraction(odds, edge):
             if odds < 0:
                 b = 100 / abs(odds)
             else:
                 b = odds / 100
-            return max((b * edge) / (b + 1), 0)
+            q = 1 - edge  # Probability of losing is complement of edge
+            kelly = (b * edge - q) / b
+            return max(kelly, 0)
 
-        edge_1 = adjusted_roi_1
-        edge_2 = adjusted_roi_2
-
-        kelly_1 = kelly_fraction(odds_1, edge_1)
-        kelly_2 = kelly_fraction(odds_2, edge_2)
-
+        # Weights proportional to sqrt of sample size to reflect confidence
         weight_1 = math.sqrt(sample_size_1)
         weight_2 = math.sqrt(sample_size_2)
         total_weight = weight_1 + weight_2
 
-        combined_kelly = (kelly_1 * weight_1 + kelly_2 * weight_2) / total_weight
+        # Weighted combined edge
+        combined_edge = (adjusted_roi_1 * weight_1 + adjusted_roi_2 * weight_2) / total_weight
 
+        # Calculate combined Kelly fraction using user's odds
+        combined_kelly = kelly_fraction(user_odds, combined_edge)
+
+        # Convert Kelly fraction to units (assuming 1 unit = 1% bankroll)
+        recommended_units = combined_kelly * 100
+
+        # Display results
         st.markdown("### Multi-Bettor Recommendation")
-        st.markdown(f"**Recommended Bet Size (units)**: {combined_kelly:.2f}")
-        st.caption("This bet size accounts for both bettors' performance and confidence.")
-
+        st.markdown(f"**Combined Edge (weighted):** {combined_edge * 100:.2f}%")
+        st.markdown(f"**Recommended Bet Size (units):** {recommended_units:.2f}")
+        st.caption("Bet size reflects combined confidence of both bettors.")

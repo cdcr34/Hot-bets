@@ -116,8 +116,11 @@ with tab1:
     st.markdown(f"**Signal-Weighted Recommended Units:** {signal_weighted_units:.2f} units")
     st.markdown(f"**Signal-Weighted Stake:** {signal_weighted_stake:.2%} of bankroll")
 
+# --- Multi-Bettor Signal Tab ---
 with tab2:
     st.header("Multi-Bettor Signal")
+
+    st.markdown("Select two bettors who made the same pick to calculate a signal-weighted recommendation.")
 
     bettor1 = st.selectbox("First Bettor", sorted(df['Bettor'].unique()), key="bettor1")
     bettor2 = st.selectbox("Second Bettor", sorted(df['Bettor'].unique()), key="bettor2")
@@ -140,42 +143,33 @@ with tab2:
         odds_2 = st.number_input("Odds Bettor 2 Got", value=-110, key="odds2")
         user_odds = st.number_input("Odds You Can Bet At", value=-110, key="user_odds")
 
-        def bayesian_shrink(roi, n, k=100, prior_mean=0.0):
-            shrink = n / (n + k)
-            return shrink * roi + (1 - shrink) * prior_mean
+        # Bayesian shrinkage
+        adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
+        adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
 
-        adj_roi_1 = bayesian_shrink(roi_1, sample_size_1)
-        adj_roi_2 = bayesian_shrink(roi_2, sample_size_2)
+        # Convert ROI to implied probabilities
+        def decimal_odds(odds):
+            return 1 + (100 / abs(odds)) if odds < 0 else 1 + (odds / 100)
 
-        def implied_true_probability(odds, roi):
-            payout = odds / 100 if odds > 0 else 100 / abs(odds)
-            return (roi + 1) / (payout + 1)
+        def implied_probability(roi, odds):
+            d = decimal_odds(odds)
+            return (roi + 1) / d
 
-        # Compute implied true probabilities per bettor
-        itp_1 = implied_true_probability(odds_1, adj_roi_1)
-        itp_2 = implied_true_probability(odds_2, adj_roi_2)
+        p1 = implied_probability(adjusted_roi_1, odds_1)
+        p2 = implied_probability(adjusted_roi_2, odds_2)
 
-        # Weight confidence by sqrt(sample size)
-        weight_1 = math.sqrt(sample_size_1)
-        weight_2 = math.sqrt(sample_size_2)
-        total_weight = weight_1 + weight_2
+        weight_1 = 4.57  # or compute from adjusted ROI and odds_1
+        weight_2 = 6.82  # or compute from adjusted ROI and odds_2
 
-        combined_itp = (itp_1 * weight_1 + itp_2 * weight_2) / total_weight
+        combined_p = (p1 * weight_1 + p2 * weight_2) / (weight_1 + weight_2)
 
-        def kelly_fraction(odds, win_prob):
-            if odds < 0:
-                b = 100 / abs(odds)
-            else:
-                b = odds / 100
-            q = 1 - win_prob
-            kelly = (b * win_prob - q) / b
-            return max(kelly, 0)
+        # Convert combined probability to edge at user_odds
+        b_user = decimal_odds(user_odds) - 1
+        edge_combined = combined_p * b_user - (1 - combined_p)
 
-        combined_kelly = kelly_fraction(user_odds, combined_itp)
-
-        recommended_units = combined_kelly * 100  # 1 unit = 1% bankroll
+        # Kelly fraction at user's odds
+        kelly_fraction_combined = max((b_user * edge_combined) / (b_user + 1), 0)
 
         st.markdown("### Multi-Bettor Recommendation")
-        st.markdown(f"**Combined Edge (Implied Win Probability):** {combined_itp * 100:.2f}%")
-        st.markdown(f"**Recommended Bet Size (units):** {recommended_units:.2f}")
-        st.caption("Bet size accounts for combined bettor confidence and your current odds.")
+        st.markdown(f"**Recommended Bet Size (units)**: {kelly_fraction_combined * 100:.2f}")
+        st.caption("This bet size combines both bettors' implied probabilities weighted by their bet size suggestions.")

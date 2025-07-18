@@ -118,7 +118,7 @@ with tab1:
 
 # --- Multi-Bettor Signal Tab ---
 with tab2:
-    st.header("Multi-Bettor Signal")
+    st.header("Multi-Bettor Signal (DON'T USE!!!)")
 
     st.markdown("Select two bettors who made the same pick to calculate a signal-weighted recommendation.")
 

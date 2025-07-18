@@ -5,6 +5,11 @@ import math
 # Load the spreadsheet
 df = pd.read_csv("bettor_stats.csv")
 
+# --- Create a second tab for Multi-Bettor Signal ---
+tab1, tab2 = st.tabs(["Bet Size Signal", "Multi-Bettor Signal"])
+
+with tab1:
+
 # Sidebar selections
 st.sidebar.header("Select Bettor & Bet Type")
 bettor = st.sidebar.selectbox("Bettor", sorted(df['Bettor'].unique()))
@@ -163,9 +168,6 @@ with st.expander("Recomended Units to bet (Kelly Criterion)"):
     The Kelly Criterion is a formula used to determine the optimal bet size based on edge and odds.  
     It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
     """)
-
-# --- Create a second tab for Multi-Bettor Signal ---
-tab1, tab2 = st.tabs(["Bet Size Signal", "Multi-Bettor Signal"])
 
 with tab2:
     st.header("Multi-Bettor Signal")

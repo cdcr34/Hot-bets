@@ -14,7 +14,13 @@ import math
 # Load the spreadsheet
 df = pd.read_csv("bettor_stats.csv")
 
-# Sidebar selections
+st.sidebar.header("Select App Mode")
+app_mode = st.sidebar.radio("Choose Mode:", ["Bet Size Signal", "Multi-Bettor Signal"])
+
+if app_mode == "Bet Size Signal":
+    # Your entire existing single bettor code here...
+
+    # Sidebar selections
 st.sidebar.header("Select Bettor & Bet Type")
 bettor = st.sidebar.selectbox("Bettor", sorted(df['Bettor'].unique()))
 
@@ -171,7 +177,8 @@ with st.expander("Recomended Units to bet (Kelly Criterion)"):
     It maximizes long-term growth by balancing risk and reward. This version uses half-Kelly to reduce volatility.
   """)
 
-# (You can keep your current code here for single bettor signal)
+elif app_mode == "Multi-Bettor Signal":
+    # Your multi-bettor signal code here...
 
 # --- New Multi-Bettor Signal tab ---
 st.sidebar.header("Select App Mode")

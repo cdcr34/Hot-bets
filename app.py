@@ -118,7 +118,7 @@ with tab1:
 
 # --- Multi-Bettor Signal Tab ---
 with tab2:
-    st.header("Multi-Bettor Signal (DON'T USE!!!)")
+    st.header("Multi-Bettor Signal")
 
     st.markdown("Select two bettors who made the same pick to calculate a signal-weighted recommendation.")
 
@@ -147,29 +147,25 @@ with tab2:
         adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
         adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
 
-        # Convert ROI to implied probabilities
-        def decimal_odds(odds):
-            return 1 + (100 / abs(odds)) if odds < 0 else 1 + (odds / 100)
+        # Kelly fractions
+        def kelly_fraction(odds, edge):
+            if odds < 0:
+                b = 100 / abs(odds)
+            else:
+                b = odds / 100
+            return max((b * edge) / (b + 1), 0)
 
-        def implied_probability(roi, odds):
-            d = decimal_odds(odds)
-            return (roi + 1) / d
+        edge_1 = adjusted_roi_1
+        edge_2 = adjusted_roi_2
 
-        p1 = implied_probability(adjusted_roi_1, odds_1)
-        p2 = implied_probability(adjusted_roi_2, odds_2)
+        kelly_1 = kelly_fraction(odds_1, edge_1) / 2  # Half Kelly
+        kelly_2 = kelly_fraction(odds_2, edge_2) / 2  # Half Kelly
 
-        weight_1 = 4.57  # or compute from adjusted ROI and odds_1
-        weight_2 = 6.82  # or compute from adjusted ROI and odds_2
-
-        combined_p = (p1 * weight_1 + p2 * weight_2) / (weight_1 + weight_2)
-
-        # Convert combined probability to edge at user_odds
-        b_user = decimal_odds(user_odds) - 1
-        edge_combined = combined_p * b_user - (1 - combined_p)
-
-        # Kelly fraction at user's odds
-        kelly_fraction_combined = max((b_user * edge_combined) / (b_user + 1), 0)
+        # Adjusted logic for combining signals with correlation penalty
+        correlation_penalty = 0.5  # Assume moderate correlation
+        overlap_penalty = correlation_penalty * min(kelly_1, kelly_2)
+        adjusted_bet = kelly_1 + kelly_2 - overlap_penalty
 
         st.markdown("### Multi-Bettor Recommendation")
-        st.markdown(f"**Recommended Bet Size (units)**: {kelly_fraction_combined * 100:.2f}")
-        st.caption("This bet size combines both bettors' implied probabilities weighted by their bet size suggestions.")
+        st.markdown(f"**Recommended Bet Size (units)**: {adjusted_bet:.2f}")
+        st.caption("This bet size accounts for both bettors' performance and penalizes for correlated overlap.")

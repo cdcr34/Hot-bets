@@ -20,7 +20,7 @@ app_mode = st.sidebar.radio("Choose Mode:", ["Bet Size Signal", "Multi-Bettor Si
 if app_mode == "Bet Size Signal":
     # Your entire existing single bettor code here...
 
-    # Sidebar selections
+# Sidebar selections
 st.sidebar.header("Select Bettor & Bet Type")
 bettor = st.sidebar.selectbox("Bettor", sorted(df['Bettor'].unique()))
 

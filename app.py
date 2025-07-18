@@ -21,7 +21,7 @@ if app_mode == "Bet Size Signal":
     # Your entire existing single bettor code here...
 
 # Sidebar selections
-st.sidebar.header("Select Bettor & Bet Type")
+    st.sidebar.header("Select Bettor & Bet Type")
 bettor = st.sidebar.selectbox("Bettor", sorted(df['Bettor'].unique()))
 
 # Only show bet types this bettor has data for

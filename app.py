@@ -120,7 +120,7 @@ with tab1:
 with tab2:
     st.header("Multi-Bettor Signal")
 
-    st.markdown("Select two bettors who made the same pick to calculate a combined bet size recommendation.")
+    st.markdown("Select two bettors who made the same pick to calculate a correlation-adjusted recommendation.")
 
     bettor1 = st.selectbox("First Bettor", sorted(df['Bettor'].unique()), key="bettor1")
     bettor2 = st.selectbox("Second Bettor", sorted(df['Bettor'].unique()), key="bettor2")
@@ -139,14 +139,19 @@ with tab2:
         roi_2 = row2.iloc[0]['ROI (%)'] / 100
         sample_size_2 = int(row2.iloc[0]['Sample Size'])
 
-        odds_1 = st.number_input("Odds Bettor 1 Got", value=-110, key="odds1")
-        odds_2 = st.number_input("Odds Bettor 2 Got", value=-110, key="odds2")
-        user_odds = st.number_input("Odds You Can Bet At", value=-110, key="user_odds")
+        odds = st.number_input("Odds (Assuming Same for Both Bettors and You)", value=-110, key="odds_shared")
 
-        # Bayesian shrinkage function assumed defined elsewhere
-        adjusted_roi_1 = bayesian_shrink(roi_1, sample_size_1)
-        adjusted_roi_2 = bayesian_shrink(roi_2, sample_size_2)
+        correlation = st.slider("Estimated Correlation Between Bettors (0 = Independent, 1 = Identical)", 0.0, 1.0, 0.5, 0.05)
 
+        # Bayesian shrinkage
+        def bayesian_shrink(roi, sample_size, prior=0, prior_weight=30):
+            weight = sample_size / (sample_size + prior_weight)
+            return weight * roi + (1 - weight) * prior
+
+        adj_roi_1 = bayesian_shrink(roi_1, sample_size_1)
+        adj_roi_2 = bayesian_shrink(roi_2, sample_size_2)
+
+        # Kelly fraction calculator
         def kelly_fraction(odds, edge):
             if odds < 0:
                 b = 100 / abs(odds)
@@ -154,13 +159,12 @@ with tab2:
                 b = odds / 100
             return max((b * edge) / (b + 1), 0)
 
-        # Compute half-Kelly bet sizes for each bettor
-        kelly_1 = kelly_fraction(odds_1, adjusted_roi_1) / 2
-        kelly_2 = kelly_fraction(odds_2, adjusted_roi_2) / 2
+        f1 = kelly_fraction(odds, adj_roi_1) / 2  # half-Kelly
+        f2 = kelly_fraction(odds, adj_roi_2) / 2
 
-        # Combine by adding half Kelly bets (since same bet)
-        combined_kelly = kelly_1 + kelly_2
+        adjusted_units = f1 + f2 - correlation * min(f1, f2)
 
-        st.markdown("### Multi-Bettor Combined Recommendation")
-        st.markdown(f"**Recommended Bet Size (units):** {combined_kelly:.2f}")
-        st.caption("Sum of each bettor's half-Kelly recommended bet sizes for the same bet.")
+        st.markdown("### Multi-Bettor Recommendation")
+        st.markdown(f"**Recommended Bet Size (units)**: {adjusted_units:.2f}")
+        st.caption("This bet size accounts for agreement and overlap between bettors using a correlation factor.")
+

@@ -100,7 +100,7 @@ with tab1:
 
     st.subheader(f"Bettor ROI: {roi_decimal * 100:.2f}%")
     st.markdown(f"**Sample Size:** {sample_size} bets")
-    st.markdown(f"**Avg Bet Size:** {avg_bet_size_units:.2f} units")
+    st.markdown(f"**Avg Bet Size:** ${avg_bet_size_units:.2f}")
     st.markdown("---")
     st.subheader(f"Bayesian Adjusted Bettor ROI: {adjusted_roi * 100:.2f}%")
     st.markdown(f"**95% CI:** {roi_lower * 100:.2f}% to {roi_upper * 100:.2f}%")

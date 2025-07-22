@@ -1,19 +1,19 @@
-Bettor,Bet Type,ROI (%),Sample Size,Avg Bet Size
-bettywap,Moneyline (MLB),13.3,77,5.82
-bettywap,Spread (MLB),1.4,12,5.5
-bettywap,Total (MLB),10.4,131,6.9
-the_empty_room,Moneyline (MLB),14,146,84.48
-the_empty_room,Total (MLB),8.7,286,86.24
-FastEddieSports,Moneyline (MLB),14.5,593,203.04
-FastEddieSports,Spread (MLB),21,165,167.27
-VinnyG702,Spread (MLB),8.5,149,83.85
-VinnyG702,Total (MLB),8.3,350,88.06
-pabarney,Moneyline (MLB),5.6,131,122.73
-pabarney,Total (MLB),54.4,50,188
-Hawkspwn,Moneyline (MLB),8.2,564,334.39
-keith168,Moneyline (MLB),3,302,7.92
-keith168,Spread (MLB),8.4,260,8.86
-keith168,Total (MLB),11.4,284,9.63
-Time,Total (MLB),11,128,199.58
-rgeno71,Moneyline (MLB),14.8,123,9.74
-JakeMLB,Total (MLB),3,271,275.83
+Bettor	Bet Type	ROI (%)	Sample Size	Avg Bet Size
+bettywap	Moneyline (MLB)	5.6	92	7.02
+bettywap	Spread (MLB)	2.8	29	8.78
+bettywap	Total (MLB)	-0.5	159	8.3
+the_empty_room	Moneyline (MLB)	13.6	153	83.89
+the_empty_room	Total (MLB)	7.3	297	86.48
+FastEddieSports	Moneyline (MLB)	14.6	598	204.08
+FastEddieSports	Spread (MLB)	23.1	148	175.68
+VinnyG702	Spread (MLB)	10.3	162	82.49
+VinnyG702	Total (MLB)	7.3	363	86.43
+pabarney	Moneyline (MLB)	4.9	132	122.56
+pabarney	Total (MLB)	51.8	56	178.57
+Hawkspwn	Moneyline (MLB)	10.2	609	331.72
+keith168	Moneyline (MLB)	2.8	345	7.91
+keith168	Spread (MLB)	7.7	295	8.86
+keith168	Total (MLB)	6.6	327	9.7
+Time	Total (MLB)	13.4	125	200.59
+rgeno71	Moneyline (MLB)	13.1	122	9.79
+JakeMLB	Total (MLB)	0.6	253	276.68
